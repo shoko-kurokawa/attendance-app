@@ -8,6 +8,7 @@ Route::redirect('/', '/login');
 
 Route::middleware('auth')->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance');
+    Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
 });
 
 Route::middleware('guest')->group(function () {
