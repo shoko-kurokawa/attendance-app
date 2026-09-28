@@ -3,12 +3,27 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AttendanceCorrectionController;
 
 Route::redirect('/', '/login');
 
 Route::middleware('auth')->group(function () {
+    //勤怠登録
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance');
     Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
+
+    //勤怠一覧
+    Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
+
+    //勤怠詳細
+    Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
+
+    //修正申請
+    Route::post('/attendance/{id}', [AttendanceCorrectionController::class, 'store'])->name('attendance.corrections.store');
+
+    //申請一覧
+    Route::get('/stamp_correction_request/list', [AttendanceCorrectionController::class, 'index'])->name('attendance.correction.index');
+
 });
 
 Route::middleware('guest')->group(function () {
