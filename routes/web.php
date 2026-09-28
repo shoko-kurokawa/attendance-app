@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AttendanceCorrectionController;
+use App\Http\Controllers\AdminAttendanceController;
 
 Route::redirect('/', '/login');
 
@@ -29,4 +30,10 @@ Route::middleware('auth')->group(function () {
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'create'])->name('admin.login');
     Route::post('/admin/login', [AdminAuthController::class, 'store']);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.index');
+    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.show');
+    Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update');
 });
