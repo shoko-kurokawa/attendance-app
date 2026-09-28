@@ -27,4 +27,14 @@ class BreakCorrection extends Model
         return $this->belongsTo(AttendanceBreak::class, 'break_id');
     }
 
+    public function getBreakInAttribute()
+    {
+        return $this->break_start;
+    }
+
+    public function getBreakOutAttribute()
+    {
+        return $this->break_end;
+    }
+
 }
