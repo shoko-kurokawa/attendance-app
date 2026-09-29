@@ -34,8 +34,14 @@ class FortifyServiceProvider extends ServiceProvider
             return view('user.register');
         });
 
+        //ログイン画面
         Fortify::loginView(function () {
             return view('user.user-login');
+        });
+
+        //メール認証誘導画面
+        Fortify::verifyEmailView(function () {
+            return view('auth.verify-email');
         });
 
         Fortify::createUsersUsing(CreateNewUser::class);

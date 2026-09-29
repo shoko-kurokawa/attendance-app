@@ -10,7 +10,7 @@ use App\Http\Controllers\AdminAttendanceController;
 
 Route::redirect('/', '/login');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'verified')->group(function () {
     //勤怠登録
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance');
     Route::post('/attendance', [AttendanceController::class, 'store'])->name('attendance.store');
@@ -42,6 +42,9 @@ Route::middleware('auth')->group(function () {
     //ユーザー別月次勤怠
     Route::get('/admin/attendance/staff/{id}', [AdminStaffController::class, 'show'])->name('admin.staff.attendance');
 
+    //CSV出力
+    Route::post('/export', [AdminStaffController::class, 'export'])->name('admin.staff.export');
+
     //個別の勤怠詳細・修正
     Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.show');
     Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update');
@@ -49,4 +52,5 @@ Route::middleware('auth')->group(function () {
     //勤怠の承認
     Route::get('/stamp_correction_request/approve/{id}', [AdminAttendanceCorrectionController::class, 'show'])->name('admin.correction.show');
     Route::post('/stamp_correction_request/approve/{id}', [AdminAttendanceCorrectionController::class, 'approve'])->name('admin.correction.approve');
+
 });
