@@ -6,7 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminStaffController extends Controller
 {
@@ -113,5 +113,80 @@ class AdminStaffController extends Controller
         $minutes = floor(($seconds % 3600) / 60);
 
         return sprintf('%02d:%02d', $hours, $minutes);
+    }
+
+    public function export(Request $request): StreamedResponse
+    {
+        $user = User::where('admin_status', false)->findOrFail($request->input('user_id'));
+        $date = Carbon::createFromFormat('Y-m', $request->input('year_month'));
+
+        $startOfMonth = $date->copy()->startOfMonth();
+        $endOfMonth = $date->copy()->endOfMonth();
+
+        $attendanceRecords = $user->attendances()
+            ->with('breaks')
+            ->whereBetween('date', [
+                $startOfMonth->format('Y-m-d'),
+                $endOfMonth->format('Y-m-d'),
+            ])
+            ->orderBy('date')
+            ->get();
+
+        $fileName = $user->name . '_' . $date->format('Y-m') . '_attendance.csv';
+
+        return response()->streamDownload(function () use ($attendanceRecords) {
+            $stream = fopen('php://output', 'w');
+
+            // Excelで日本語が文字化けしないようBOMを付与
+            fwrite($stream, "\xEF\xBB\xBF");
+
+            fputcsv($stream, [
+                '日付',
+                '出勤',
+                '退勤',
+                '休憩',
+                '合計',
+            ]);
+
+            foreach ($attendanceRecords as $attendance) {
+                $totalBreakSeconds = 0;
+
+                foreach ($attendance->breaks as $break) {
+                    if ($break->break_start && $break->break_end) {
+                        $totalBreakSeconds += Carbon::parse($break->break_start)
+                            ->diffInSeconds(Carbon::parse($break->break_end));
+                    }
+                }
+
+                $totalWorkSeconds = null;
+
+                if ($attendance->clock_in && $attendance->clock_out) {
+                    $totalSeconds = Carbon::parse($attendance->clock_in)
+                        ->diffInSeconds(Carbon::parse($attendance->clock_out));
+
+                    $totalWorkSeconds = $totalSeconds - $totalBreakSeconds;
+                }
+
+                fputcsv($stream, [
+                    Carbon::parse($attendance->date)->format('Y/m/d'),
+                    $attendance->clock_in
+                    ? Carbon::parse($attendance->clock_in)->format('H:i')
+                    : '',
+                    $attendance->clock_out
+                    ? Carbon::parse($attendance->clock_out)->format('H:i')
+                    : '',
+                    $totalBreakSeconds > 0
+                    ? $this->formatSeconds($totalBreakSeconds)
+                    : '',
+                    $totalWorkSeconds !== null
+                    ? $this->formatSeconds($totalWorkSeconds)
+                    : '',
+                ]);
+            }
+
+            fclose($stream);
+        }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
     }
 }
