@@ -45,7 +45,6 @@ Route::middleware('auth')->group(function () {
     //個別の勤怠詳細・修正
     Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.show');
     Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update');
-    Route::get('/stamp_correction_request/list', [AdminAttendanceCorrectionController::class, 'index'])->name('admin.correction.index');
 
     //勤怠の承認
     Route::get('/stamp_correction_request/approve/{id}', [AdminAttendanceCorrectionController::class, 'show'])->name('admin.correction.show');
