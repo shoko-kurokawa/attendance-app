@@ -154,7 +154,7 @@ class AttendanceController extends Controller
                 'id' => $attendance?->id,
                 'date' => $currentDate->isoFormat('MM/DD(ddd)'),
                 'clock_in' => $attendance ? Carbon::parse($attendance->clock_in)->format('H:i') : '',
-                'clock_out' => $attendance?->clock_out ? Carbon::Parse($attendance->clock_in)->format('H:i') : '',
+                'clock_out' => $attendance?->clock_out ? Carbon::Parse($attendance->clock_out)->format('H:i') : '',
                 'total_break_time' => $totalBreakSeconds > 0 ? gmdate('H:i:s', $totalBreakSeconds) : '',
                 'total_time' => $totalWorkSeconds > 0 ? gmdate('H:i:s', $totalWorkSeconds) : '',
             ];
@@ -196,8 +196,5 @@ class AttendanceController extends Controller
             'user',
             'data',
         ));
-
-
-
     }
 }

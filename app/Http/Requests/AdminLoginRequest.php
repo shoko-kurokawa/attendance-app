@@ -18,7 +18,7 @@ class AdminLoginRequest extends FormRequest
             'password' => ['required'],
         ];
     }
-    public function message(): array
+    public function messages(): array
     {
         return [
             'email.required' => 'メールアドレスを入力してください',

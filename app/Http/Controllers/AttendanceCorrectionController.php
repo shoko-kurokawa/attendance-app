@@ -49,6 +49,17 @@ class AttendanceCorrectionController extends Controller
     {
         $user = $request->user();
 
+        if ($user->admin_status) {
+            $applications = AttendanceCorrection::with([
+                'attendance.user',
+                'breakCorrections',
+            ])->latest()->get();
+
+            return view('admin.admin-application-list', compact(
+                'applications'
+            ));
+        }
+
         $applications = AttendanceCorrection::whereHas(
             'attendance',
             function ($query) use ($user) {
