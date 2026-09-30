@@ -69,6 +69,8 @@ class BreakTest extends TestCase
      */
     public function test_user_can_take_break_multiple_times(): void
     {
+        Carbon::setTestNow(Carbon::create(2026, 9, 29, 9, 0, 0));
+
         $user = User::factory()->create();
 
         $attendance = Attendance::create([
@@ -161,9 +163,7 @@ class BreakTest extends TestCase
         ]);
 
         // 出勤中へ戻る
-        $response = $this->actingAs($user)
-            ->get('/attendance');
-
+        $response = $this->actingAs($user)->get('/attendance');
         $response->assertSee('出勤中');
     }
 
@@ -172,6 +172,8 @@ class BreakTest extends TestCase
      */
     public function test_user_can_end_break_multiple_times(): void
     {
+        Carbon::setTestNow(Carbon::create(2026, 9, 29, 9, 0, 0));
+
         $user = User::factory()->create();
 
         $attendance = Attendance::create([
@@ -202,9 +204,7 @@ class BreakTest extends TestCase
         ]);
 
         // 2回目でも休憩戻が表示される
-        $response = $this->actingAs($user)
-            ->get('/attendance');
-
+        $response = $this->actingAs($user)->get('/attendance');
         $response->assertSee('休憩戻');
 
         Carbon::setTestNow(Carbon::create(2026, 9, 29, 15, 15, 0));
