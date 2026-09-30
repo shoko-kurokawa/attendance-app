@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminStaffController;
 use App\Http\Controllers\AttendanceCorrectionController;
 use App\Http\Controllers\AdminAttendanceCorrectionController;
 use App\Http\Controllers\AdminAttendanceController;
+use App\Http\Controllers\ReportController;
 
 Route::redirect('/', '/login');
 
@@ -17,6 +18,9 @@ Route::middleware('auth', 'verified')->group(function () {
 
     //勤怠一覧
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
+
+    //マイ勤怠レポート
+    Route::get('/attendance/report', [ReportController::class, 'index'])->name('attendance.report');
 
     //勤怠詳細
     Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
