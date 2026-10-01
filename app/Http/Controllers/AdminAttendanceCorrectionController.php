@@ -42,7 +42,18 @@ class AdminAttendanceCorrectionController extends Controller
             'comment' => $application->comment,
         ]);
 
-        // 休憩を修正申請の内容に更新
+        // 修正申請に残っている既存休憩IDを取得
+        $remainingBreakIds = $application->breakCorrections
+            ->pluck('break_id')
+            ->filter()
+            ->values();
+
+        // 修正申請で空欄にされた既存休憩を削除
+        $attendance->breaks()
+            ->whereNotIn('id', $remainingBreakIds)
+            ->delete();
+
+        // 休憩を修正申請の内容に更新・追加
         foreach ($application->breakCorrections as $breakCorrection) {
             if ($breakCorrection->break_id) {
                 // 既存の休憩を修正

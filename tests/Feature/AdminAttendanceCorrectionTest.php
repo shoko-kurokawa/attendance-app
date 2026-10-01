@@ -229,4 +229,97 @@ class AdminAttendanceCorrectionTest extends TestCase
         $this->assertEquals('approved', $correction->status);
         $this->assertNotNull($correction->approved_at);
     }
+
+    /**
+     * 修正申請で空欄にした既存休憩は承認時に削除される
+     */
+    public function test_approval_deletes_breaks_removed_by_correction(): void
+    {
+        // 管理者ユーザー
+        $admin = User::factory()->create(['admin_status' => true,]);
+
+        // 一般ユーザー
+        $user = User::factory()->create(['admin_status' => false,]);
+
+        // 元の勤怠
+        $attendance = Attendance::create([
+            'user_id' => $user->id,
+            'date' => '2026-09-29',
+            'clock_in' => '00:22:00',
+            'clock_out' => '00:22:00',
+            'comment' => null,
+        ]);
+
+        // 元の休憩①
+        $break1 = $attendance->breaks()->create([
+            'break_start' => '00:22:00',
+            'break_end' => '00:22:00',
+        ]);
+
+        // 元の休憩②
+        $break2 = $attendance->breaks()->create([
+            'break_start' => '00:22:00',
+            'break_end' => '00:22:00',
+        ]);
+
+        // 元の休憩③
+        $break3 = $attendance->breaks()->create([
+            'break_start' => '00:22:00',
+            'break_end' => '00:22:00',
+        ]);
+
+        // 修正申請
+        $application = $attendance->attendanceCorrections()->create([
+            'clock_in' => '09:00:00',
+            'clock_out' => '18:00:00',
+            'comment' => '休憩時間を修正します',
+            'status' => 'pending',
+        ]);
+
+        // 休憩①だけ修正申請に残す
+        // 休憩②・③についてはBreakCorrectionを作成しない
+        $application->breakCorrections()->create([
+            'break_id' => $break1->id,
+            'break_start' => '12:00:00',
+            'break_end' => '13:00:00',
+        ]);
+
+        // 管理者が承認
+        $response = $this->actingAs($admin)
+            ->post('/stamp_correction_request/approve/' . $application->id);
+
+        $response->assertRedirect(
+            '/stamp_correction_request/approve/' . $application->id
+        );
+
+        // 出退勤が修正されている
+        $this->assertDatabaseHas('attendances', [
+            'id' => $attendance->id,
+            'clock_in' => '09:00:00',
+            'clock_out' => '18:00:00',
+            'comment' => '休憩時間を修正します',
+        ]);
+
+        // 休憩①は修正されている
+        $this->assertDatabaseHas('breaks', [
+            'id' => $break1->id,
+            'attendance_id' => $attendance->id,
+            'break_start' => '12:00:00',
+            'break_end' => '13:00:00',
+        ]);
+
+        // 空欄にされた休憩②・③は削除されている
+        $this->assertDatabaseMissing('breaks', ['id' => $break2->id,]);
+
+        $this->assertDatabaseMissing('breaks', ['id' => $break3->id,]);
+
+        // この勤怠の休憩は1件だけ
+        $this->assertSame(1, $attendance->breaks()->count());
+
+        // 申請が承認済みになっている
+        $this->assertDatabaseHas('attendance_corrections', [
+            'id' => $application->id,
+            'status' => 'approved',
+        ]);
+    }
 }
