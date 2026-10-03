@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,43 +45,43 @@ class AttendanceCorrection extends Model
     }
 
     //提供Blade用：申請日時として created_at を使用
-    public function getApplicationDateAttribute()
+    public function getApplicationDateAttribute(): ?Carbon
     {
         return $this->created_at;
     }
 
     //提供Blade用：修正申請に紐づくユーザーを取得
-    public function getUserAttribute()
+    public function getUserAttribute(): ?User
     {
         return $this->attendance->user;
     }
 
     //提供Blade用：AttendanceRecord として attendance を取得
-    public function getAttendanceRecordAttribute()
+    public function getAttendanceRecordAttribute(): ?Attendance
     {
         return $this->attendance;
     }
 
     // 提供Blade用：対象日
-    public function getNewDateAttribute()
+    public function getNewDateAttribute(): ?Carbon
     {
         return $this->attendance->date;
     }
 
     // 提供Blade用：申請後の出勤時間
-    public function getNewClockInAttribute()
+    public function getNewClockInAttribute(): ?string
     {
         return $this->clock_in;
     }
 
     // 提供Blade用：申請後の退勤時間
-    public function getNewClockOutAttribute()
+    public function getNewClockOutAttribute(): ?string
     {
         return $this->clock_out;
     }
 
     // 提供Blade用：申請された休憩情報
-    public function getProposalBreaksAttribute()
+    public function getProposalBreaksAttribute(): Collection
     {
         return $this->breakCorrections;
     }

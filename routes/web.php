@@ -23,10 +23,10 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/attendance/report', [ReportController::class, 'index'])->name('attendance.report');
 
     //勤怠詳細
-    Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
 
     //修正申請
-    Route::post('/attendance/{id}', [AttendanceCorrectionController::class, 'store'])->name('attendance.corrections.store');
+    Route::post('/attendance/detail/{id}', [AttendanceCorrectionController::class, 'store'])->name('attendance.corrections.store');
 
     //申請一覧
     Route::get('/stamp_correction_request/list', [AttendanceCorrectionController::class, 'index'])->name('attendance.correction.index');

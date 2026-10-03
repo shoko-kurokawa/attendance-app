@@ -10,7 +10,7 @@ use Illuminate\View\View;
 
 class AttendanceCorrectionController extends Controller
 {
-    public function store(AttendanceCorrectionRequest $request, $id): RedirectResponse
+    public function store(AttendanceCorrectionRequest $request, int $id): RedirectResponse
     {
         $user = $request->user();
 
@@ -42,7 +42,7 @@ class AttendanceCorrectionController extends Controller
             ]);
         }
 
-        return redirect('/attendance/' . $attendance->id);
+        return redirect('/attendance/detail/' . $attendance->id);
     }
 
     public function index(Request $request): View

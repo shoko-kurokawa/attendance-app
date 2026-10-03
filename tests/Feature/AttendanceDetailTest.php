@@ -27,7 +27,7 @@ class AttendanceDetailTest extends TestCase
             'clock_out' => '18:00:00',
         ]);
 
-        $response = $this->actingAs($user)->get('/attendance/' . $attendance->id);
+        $response = $this->actingAs($user)->get('/attendance/detail/' . $attendance->id);
         $response->assertStatus(200);
         $response->assertSee('テスト太郎');
     }
@@ -46,7 +46,7 @@ class AttendanceDetailTest extends TestCase
             'clock_out' => '18:00:00',
         ]);
 
-        $response = $this->actingAs($user)->get('/attendance/' . $attendance->id);
+        $response = $this->actingAs($user)->get('/attendance/detail/' . $attendance->id);
         $response->assertStatus(200);
         $response->assertSee('2026年');
         $response->assertSee('9月15日');
@@ -66,7 +66,7 @@ class AttendanceDetailTest extends TestCase
             'clock_out' => '17:30:00',
         ]);
 
-        $response = $this->actingAs($user)->get('/attendance/' . $attendance->id);
+        $response = $this->actingAs($user)->get('/attendance/detail/' . $attendance->id);
         $response->assertStatus(200);
         $response->assertSee('08:45');
         $response->assertSee('17:30');
@@ -98,7 +98,7 @@ class AttendanceDetailTest extends TestCase
             'break_end' => '15:15:00',
         ]);
 
-        $response = $this->actingAs($user)->get('/attendance/' . $attendance->id);
+        $response = $this->actingAs($user)->get('/attendance/detail/' . $attendance->id);
         $response->assertStatus(200);
         $response->assertSee('12:00');
         $response->assertSee('12:45');
