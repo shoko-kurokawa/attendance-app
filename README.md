@@ -1,68 +1,70 @@
 ## 勤怠管理アプリ
 
 一般ユーザーの勤怠登録・修正申請と、管理者による勤怠管理・修正申請の承認を行う勤怠管理アプリです。
+
 メール認証、CSV出力、勤怠統計レポート、公開API機能も実装しています。
 
 ## 環境構築
 
 ### 1. リポジトリをクローン
 
-'''bash
+```bash
 git clone https://github.com/shoko-kurokawa/attendance-app
-'''
+```
 
 その後プロジェクトディレクトリへ移動します
-'''bash
+
+```bash
 cd attendance-app
-'''
+```
 
 ### 2. Composerパッケージをインストール
 
-'''bash
+```bash
 docker run --rm \
  -u "$(id -u):$(id -g)" \
  -v "$(pwd):/var/www/html" \
  -w /var/www/html \
  laravelsail/php85-composer:latest \
  composer install --ignore-platform-reqs
-'''
+```
 
 ### 3. 環境変数ファイルを作成
 
-'''bash
+```bash
 cp .env.example .env
-'''
+```
 
-'.env'のデータベース設定を'compose.yaml'のMySQL環境に合わせて設定します。
+`.env`のデータベース設定を'compose.yaml'のMySQL環境に合わせて設定します。
 
 例：
 
-'''env
+```env
 DB_CONNECTION=mysql
 DB_HOST=mysql
 DB_PORT=3306
 DB_DATABASE=laravel
 DB_USERNAME=sail
 DB_PASSWORD=password
-'''
+```
 
 ### 4. Dockerコンテナを起動
 
-'''bash
+```bash
 ./vendor/bin/sail up -d
-'''
+```
 
 ### 5. アプリケーションキーを生成
 
-'''bash
+```bash
 ./vendor/bin/sail artisan key:generate
-'''
+```
 
 ### 6. マイグレーションとシーディングを実行
 
-'''bash
+```bash
 ./vendor/bin/sail artisan migrate:fresh --seed
-'''
+```
 
 ## 使用技術
 
@@ -89,7 +91,7 @@ DB_PASSWORD=password
 - phpMyAdmin: http://localhost:8080
 - Mailpit: http://localhost:8025
 
-※'.env'で各転送ポートを変更している場合は、設定したポートを使用してください。
+※`.env`で各転送ポートを変更している場合は、設定したポートを使用してください。
 
 ## テストユーザー
 
@@ -139,14 +141,14 @@ sail artisan migrate:fresh --seed 実行後、以下のユーザーでログイ�
 
 API v1として勤怠情報の取得・登録・更新・削除を提供しています。
 
-'''text
+```text
 GET /api/v1/attendance-records
 GET /api/v1/attendance-records/{attendanceRecord}
 POST /api/v1/attendance-records
 PUT /api/v1/attendance-records/{attendanceRecord}
 PATCH /api/v1/attendance-records/{attendanceRecord}
 DELETE /api/v1/attendance-records/{attendanceRecord}
-'''
+```
 
 GETは認証不要です。
 POST、PUT、PATCH、DELETEにはLaravel Sanctumによる認証が必要です。
@@ -155,6 +157,6 @@ POST、PUT、PATCH、DELETEにはLaravel Sanctumによる認証が必要です�
 
 以下のコマンドでテストを実行できます。
 
-'''bash
+```bash
 ./vendor/bin/sail artisan test
-'''
+```
