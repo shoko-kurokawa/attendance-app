@@ -38,9 +38,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/admin/login', [AdminAuthController::class, 'store']);
 });
 
-Route::post('/admin/logout', [AdminAuthController::class, 'destroy'])->middleware('auth')->name('admin.logout');
+Route::post('/admin/logout', [AdminAuthController::class, 'destroy'])->middleware('auth', 'admin')->name('admin.logout');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'admin')->group(function () {
     //勤怠・一般ユーザー一覧
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.index');
     Route::get('/admin/staff/list', [AdminStaffController::class, 'index'])->name('admin.staff.index');

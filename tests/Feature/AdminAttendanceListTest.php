@@ -160,4 +160,15 @@ class AdminAttendanceListTest extends TestCase
         $response->assertSee('10:15');
         $response->assertSee('19:15');
     }
+
+    /**
+     * 一般ユーザーは管理者の勤怠一覧にアクセスできない
+     */
+    public function test_general_user_cannot_access_admin_attendance_list(): void
+    {
+        $user = User::factory()->create(['admin_status' => false,]);
+
+        $response = $this->actingAs($user)->get('/admin/attendance/list');
+        $response->assertStatus(403);
+    }
 }

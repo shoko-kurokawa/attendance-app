@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrection;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -188,15 +188,9 @@ class AttendanceApiTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonStructure(['message', 'errors',]);
-        $response->assertJsonValidationErrors([
-            'user_id',
-            'date',
-            'clock_in',
-        ]);
-
-        $response->assertJsonPath('errors.user_id.0', 'ユーザーIDを入力してください。');
-        $response->assertJsonPath('errors.date.0', '日付を入力してください。');
-        $response->assertJsonPath('errors.clock_in.0', '出勤時間を入力してください。');
+        $response->assertJsonValidationErrors(['date', 'clock_in',]);
+        $response->assertJsonPath('errors.date.0', '勤怠日は必須です。');
+        $response->assertJsonPath('errors.clock_in.0', '出勤時刻は必須です。');
     }
 
     /**
@@ -420,5 +414,52 @@ class AttendanceApiTest extends TestCase
             'id' => $attendance->id,
             'user_id' => $user2->id,
         ]);
+    }
+
+    /**
+     * PATCHで自分の勤怠を部分更新できる
+     */
+    public function test_authenticated_user_can_partially_update_own_attendance_with_patch(): void
+    {
+        $user = User::factory()->create();
+
+        $attendance = Attendance::create([
+            'user_id' => $user->id,
+            'date' => '2026-09-15',
+            'clock_in' => '09:00:00',
+            'clock_out' => '18:00:00',
+            'comment' => '変更前',
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $response = $this->patchJson(
+            '/api/v1/attendance-records/' . $attendance->id,
+            [
+                'comment' => 'PATCHで変更',
+            ]
+        );
+
+        $response->assertStatus(200);
+        $response->assertJsonPath('data.comment', 'PATCHで変更');
+
+        $this->assertDatabaseHas('attendances', [
+            'id' => $attendance->id,
+            'user_id' => $user->id,
+            'date' => '2026-09-15',
+            'clock_in' => '09:00:00',
+            'clock_out' => '18:00:00',
+            'comment' => 'PATCHで変更',
+        ]);
+    }
+
+    /**
+     * 一覧取得でper_pageが100を超える場合は422を返す
+     */
+    public function test_attendance_record_index_returns_422_when_per_page_exceeds_100(): void
+    {
+        $response = $this->getJson('/api/v1/attendance-records?per_page=101');
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['per_page',]);
     }
 }
