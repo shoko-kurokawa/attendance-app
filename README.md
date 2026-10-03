@@ -76,6 +76,10 @@ DB_PASSWORD=password
 - phpMyAdmin
 - Docker
 
+## ER図
+
+<img width="3036" alt="ER図" src="https://github.com/user-attachments/assets/c936d7ef-6c66-48b7-a5dc-fcee1abb4251" />
+
 ## URL
 
 - アプリケーション: http://localhost
