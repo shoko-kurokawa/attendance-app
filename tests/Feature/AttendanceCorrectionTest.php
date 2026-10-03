@@ -42,7 +42,7 @@ class AttendanceCorrectionTest extends TestCase
         $attendance = $this->createAttendance($user);
 
         $response = $this->actingAs($user)
-            ->post('/attendance/' . $attendance->id, [
+            ->post('/attendance/detail/' . $attendance->id, [
                 'new_clock_in' => '19:00',
                 'new_clock_out' => '18:00',
                 'new_break_in' => ['12:00'],
@@ -64,7 +64,7 @@ class AttendanceCorrectionTest extends TestCase
         $attendance = $this->createAttendance($user);
 
         $response = $this->actingAs($user)
-            ->post('/attendance/' . $attendance->id, [
+            ->post('/attendance/detail/' . $attendance->id, [
                 'new_clock_in' => '09:00',
                 'new_clock_out' => '18:00',
                 'new_break_in' => ['19:00'],
@@ -86,7 +86,7 @@ class AttendanceCorrectionTest extends TestCase
         $attendance = $this->createAttendance($user);
 
         $response = $this->actingAs($user)
-            ->post('/attendance/' . $attendance->id, [
+            ->post('/attendance/detail/' . $attendance->id, [
                 'new_clock_in' => '09:00',
                 'new_clock_out' => '18:00',
                 'new_break_in' => ['17:30'],
@@ -108,7 +108,7 @@ class AttendanceCorrectionTest extends TestCase
         $attendance = $this->createAttendance($user);
 
         $response = $this->actingAs($user)
-            ->post('/attendance/' . $attendance->id, [
+            ->post('/attendance/detail/' . $attendance->id, [
                 'new_clock_in' => '09:00',
                 'new_clock_out' => '18:00',
                 'new_break_in' => ['12:00'],
@@ -130,7 +130,7 @@ class AttendanceCorrectionTest extends TestCase
         $attendance = $this->createAttendance($user);
 
         $response = $this->actingAs($user)
-            ->post('/attendance/' . $attendance->id, [
+            ->post('/attendance/detail/' . $attendance->id, [
                 'new_clock_in' => '08:30',
                 'new_clock_out' => '17:30',
                 'new_break_in' => ['12:00'],
@@ -138,7 +138,7 @@ class AttendanceCorrectionTest extends TestCase
                 'comment' => '打刻時間を修正します',
             ]);
 
-        $response->assertRedirect('/attendance/' . $attendance->id);
+        $response->assertRedirect('/attendance/detail/' . $attendance->id);
 
         $this->assertDatabaseHas('attendance_corrections', [
             'attendance_id' => $attendance->id,
@@ -217,8 +217,8 @@ class AttendanceCorrectionTest extends TestCase
 
         $response = $this->actingAs($user)->get('/stamp_correction_request/list');
         $response->assertStatus(200);
-        $response->assertSee('/attendance/' . $attendance->id, false);
-        $response = $this->actingAs($user)->get('/attendance/' . $attendance->id);
+        $response->assertSee('/attendance/detail/' . $attendance->id, false);
+        $response = $this->actingAs($user)->get('/attendance/detail/' . $attendance->id);
         $response->assertStatus(200);
         $response->assertSee('勤怠詳細');
         $response->assertSee('承認待ちのため修正できません');

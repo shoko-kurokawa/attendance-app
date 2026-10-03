@@ -168,7 +168,7 @@ class AttendanceController extends Controller
         ));
     }
 
-    public function show(Request $request, $id): View
+    public function show(Request $request, int $id): View
     {
         $user = $request->user();
 

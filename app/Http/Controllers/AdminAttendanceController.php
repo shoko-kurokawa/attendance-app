@@ -72,7 +72,7 @@ class AdminAttendanceController extends Controller
         return sprintf('%02d:%02d', $hours, $minutes);
     }
 
-    public function show($id): View
+    public function show(int $id): View
     {
         $attendance = Attendance::with(['user', 'breaks'])
             ->findOrFail($id);
@@ -108,7 +108,7 @@ class AdminAttendanceController extends Controller
         ));
     }
 
-    public function update(AdminAttendanceRequest $request, $id): RedirectResponse
+    public function update(AdminAttendanceRequest $request, int $id): RedirectResponse
     {
         $attendance = Attendance::with('breaks')->findOrFail($id);
 

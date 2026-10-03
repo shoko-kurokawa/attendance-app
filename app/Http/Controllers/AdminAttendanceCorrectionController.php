@@ -16,7 +16,7 @@ class AdminAttendanceCorrectionController extends Controller
         return view('admin.admin-application-list', compact('applications'));
     }
 
-    public function show($id): View
+    public function show(int $id): View
     {
         $application = AttendanceCorrection::with(['attendance.user', 'breakCorrections',])->findOrFail($id);
         $user = $application->attendance->user;
@@ -24,7 +24,7 @@ class AdminAttendanceCorrectionController extends Controller
         return view('admin.admin-application-detail', compact('application', 'user', ));
     }
 
-    public function approve($id): RedirectResponse
+    public function approve(int $id): RedirectResponse
     {
         $application = AttendanceCorrection::with(['attendance.breaks', 'breakCorrections',])->findOrFail($id);
 

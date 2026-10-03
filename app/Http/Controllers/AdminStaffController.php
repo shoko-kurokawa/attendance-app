@@ -17,7 +17,7 @@ class AdminStaffController extends Controller
         return view('admin.staff-list', compact('users'));
     }
 
-    public function show(Request $request, $id): View
+    public function show(Request $request, int $id): View
     {
         $user = User::where('admin_status', false)->findOrFail($id);
 

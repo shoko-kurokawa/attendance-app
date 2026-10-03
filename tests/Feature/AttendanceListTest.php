@@ -136,10 +136,10 @@ class AttendanceListTest extends TestCase
         // 一覧画面に詳細リンクが存在することを確認
         $response = $this->actingAs($user)->get('/attendance/list?date=2026-09');
         $response->assertStatus(200);
-        $response->assertSee('/attendance/' . $attendance->id, false);
+        $response->assertSee('/attendance/detail/' . $attendance->id, false);
 
         // 詳細リンクの遷移先そのものも確認
-        $response = $this->actingAs($user)->get('/attendance/' . $attendance->id);
+        $response = $this->actingAs($user)->get('/attendance/detail/' . $attendance->id);
         $response->assertStatus(200);
         $response->assertSee('勤怠詳細');
     }
